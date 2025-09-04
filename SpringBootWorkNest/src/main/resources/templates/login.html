@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>WorkNest | Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            /* Full screen gradient with the abstract background image */
+            background: url('https://img.freepik.com/premium-vector/abstract-digital-background-vector-technology-concept_206927-414.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        /* Overlay to blend the image with the purple gradient theme */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(127, 0, 255, 0.8), rgba(225, 0, 255, 0.8));
+            z-index: -1;
+        }
+
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+        }
+
+        .app-title {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .login-form-container {
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            padding: 2rem 3rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.7); /* Lighter semi-transparent input fields */
+            border: none;
+            color: #333333;
+            padding: 10px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .form-control::placeholder {
+            color: rgba(51, 51, 51, 0.6);
+        }
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.9);
+            outline: none;
+            box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #8A2BE2, #C71585);
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 12px 25px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #9932CC, #DA70D6);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .text-muted, a {
+            color: #f0f0f0 !important;
+        }
+        a:hover {
+            color: #C71585 !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container login-wrapper">
+    <h1 class="app-title">WorkNest</h1>
+    <div class="login-form-container">
+        
+        <div th:if="${param.registered}" class="alert alert-success text-center">
+            Registration successful! Please log in.
+        </div>
+        <div th:if="${param.error}" class="alert alert-danger text-center">
+            Invalid username or password.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-info text-center">
+            You have been logged out successfully.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="mb-4">
+                <input type="text" name="username" class="form-control" placeholder="Username" required>
+            </div>
+            <div class="mb-4">
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <p>Don’t have an account? <a th:href="@{/register}">Register here</a></p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
