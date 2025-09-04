@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f3e8ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .dashboard-header {
+            background: linear-gradient(90deg, #6a11cb, #8e44ad);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .dashboard-header h2 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-custom {
+            border-radius: 16px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+            background: #fff;
+        }
+        .table thead {
+            background: linear-gradient(90deg, #6a11cb, #8e44ad);
+            color: white;
+        }
+        .btn-success {
+            background: linear-gradient(90deg, #20c997, #17a673);
+            border: none;
+        }
+        .btn-success:hover {
+            background: linear-gradient(90deg, #17a673, #138f6a);
+        }
+        .btn-danger {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            border: none;
+        }
+        .btn-danger:hover {
+            background: linear-gradient(90deg, #c0392b, #922b21);
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #6a11cb, #8e44ad);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #581b98, #6a11cb);
+        }
+        .btn-secondary {
+            background: linear-gradient(90deg, #8e44ad, #6a11cb);
+            border: none;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(90deg, #581b98, #6a11cb);
+        }
+    </style>
+</head>
+<body class="container mt-4">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h2>📊 Admin Dashboard</h2>
+        <a th:href="@{/logout}" class="btn btn-danger">Logout</a>
+    </div>
+
+    <!-- Assign Task Form -->
+    <div class="card card-custom p-4">
+        <h4 class="mb-3 text-primary">📌 Assign New Task</h4>
+        <form th:action="@{/admin/task/create}" method="post" th:object="${newTask}">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Title</label>
+                <input type="text" class="form-control" th:field="*{title}" placeholder="Enter task title" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Description</label>
+                <textarea class="form-control" th:field="*{description}" placeholder="Enter task description" required></textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Start Date</label>
+                    <input type="date" class="form-control" th:field="*{startDate}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Due Date</label>
+                    <input type="date" class="form-control" th:field="*{dueDate}">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Assign Users</label>
+                <select multiple class="form-control" name="assignedUserIds">
+                    <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.username}"></option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Create Task</button>
+        </form>
+    </div>
+
+    <!-- Tasks Table -->
+    <div class="card card-custom p-4">
+        <h4 class="mb-3 text-primary">✅ All Tasks</h4>
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Start Date</th>
+                    <th>Due Date</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="t : ${tasks}">
+                    <td th:text="${t.title}"></td>
+                    <td>
+                        <span th:text="${t.status}"
+                              th:classappend="${t.status == 'Completed'} ? 'badge bg-success' : 'badge bg-warning text-dark'">
+                        </span>
+                    </td>
+                    <td th:text="${t.startDate}"></td>
+                    <td th:text="${t.dueDate}"></td>
+                    <td class="text-center">
+                        <form th:action="@{/admin/task/finish}" method="post" style="display:inline">
+                            <input type="hidden" name="id" th:value="${t.id}">
+                            <button type="submit" class="btn btn-sm btn-primary">✅ Mark Completed</button>
+                        </form>
+                        <a th:href="@{'/admin/task/' + ${t.id} + '/comments'}" class="btn btn-sm btn-secondary">💬 View Comments</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

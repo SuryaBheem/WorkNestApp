@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #7F00FF, #E100FF);
+            color: #333;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: rgba(26, 0, 52, 0.9);
+            color: white;
+            padding: 20px;
+        }
+        .sidebar h4 {
+            color: #f0f0f0;
+            margin-bottom: 30px;
+        }
+        .sidebar a {
+            display: block;
+            color: #e1b1ff;
+            text-decoration: none;
+            padding: 10px 0;
+            transition: 0.2s;
+        }
+        .sidebar a:hover {
+            color: #fff;
+        }
+
+        /* Main content */
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+        .stat-total { background: linear-gradient(90deg, #7F00FF, #C71585); }
+        .stat-completed { background: linear-gradient(90deg, #11998e, #38ef7d); }
+        .stat-inprogress { background: linear-gradient(90deg, #fbc531, #e1b12c); }
+
+        /* Task Cards */
+        .card-custom {
+            border-radius: 15px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+            background: #ffffffee;
+            backdrop-filter: blur(6px);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Badges */
+        .badge-success {
+            background: linear-gradient(90deg, #1d976c, #93f9b9);
+        }
+        .badge-warning {
+            background: linear-gradient(90deg, #FFB800, #FFD25F);
+            color: #333;
+        }
+        .badge-secondary {
+            background: #95a5a6;
+        }
+
+        /* Buttons */
+        .btn-success {
+            border-radius: 25px;
+            background: linear-gradient(90deg, #1d976c, #93f9b9);
+            color: #fff;
+            border: none;
+            transition: 0.3s;
+        }
+        .btn-success:hover {
+            opacity: 0.9;
+        }
+        .btn-primary {
+            border-radius: 25px;
+            background: linear-gradient(90deg, #8A2BE2, #C71585);
+            color: #fff;
+            border: none;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        .btn-danger {
+             background: #dc3545;
+             border-radius: 25px;
+             color: #fff;
+             border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h4>User Panel</h4>
+        <a th:href="@{/user/dashboard}">🏠 Dashboard</a>
+        <a th:href="@{/logout}">🚪 Logout</a>
+    </div>
+
+    <div class="content">
+
+        <div class="topbar">
+            <h2>Welcome, <span th:text="${user.username}"></span>!</h2>
+            <a class="btn btn-danger" th:href="@{/logout}">Logout</a>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stat-card stat-total">
+                    Total Tasks
+                    <h3 th:text="${totalTasks}">0</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card stat-completed">
+                    Completed
+                    <h3 th:text="${completedTasks}">0</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card stat-inprogress">
+                    In Progress
+                    <h3 th:text="${inProgressTasks}">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4" th:each="a : ${assignments}">
+                <div class="card-custom">
+                    <h5 class="card-title text-dark" th:text="${a.task.title}"></h5>
+
+                    <p>
+                        <span th:switch="${a.task.status}">
+                            <span th:case="'COMPLETED'" class="badge badge-success" th:text="${a.task.status}"></span>
+                            <span th:case="'IN_PROGRESS'" class="badge badge-warning" th:text="${a.task.status}"></span>
+                            <span th:case="*" class="badge badge-secondary" th:text="${a.task.status}"></span>
+                        </span>
+                    </p>
+
+                    <form th:action="@{/user/task/{id}/status(id=${a.task.id})}" method="post" class="d-flex gap-2 mb-3">
+                        <select name="status" class="form-select form-select-sm w-50">
+                            <option>PENDING</option>
+                            <option>IN_PROGRESS</option>
+                            <option>COMPLETED</option>
+                        </select>
+                        <button class="btn btn-sm btn-success">Update</button>
+                    </form>
+
+                    <h6 class="text-muted">Comments</h6>
+                    <div class="mb-2" th:each="c : ${a.task.comments}">
+                        <span>
+                            <strong th:text="${c.user.username}"></strong>:
+                            <span th:text="${c.text}"></span>
+                        </span><br>
+                    </div>
+
+                    <form th:action="@{/user/task/{id}/comment(id=${a.task.id})}" method="post" class="d-flex gap-2 mt-2">
+                        <input type="text" name="text" class="form-control form-control-sm" placeholder="Add comment">
+                        <button class="btn btn-sm btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

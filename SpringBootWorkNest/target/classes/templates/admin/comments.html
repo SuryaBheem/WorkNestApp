@@ -1,0 +1,72 @@
+<!DOCTYPE html> 
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Comments</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f3e8ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .comments-header {
+            background: linear-gradient(90deg, #6a11cb, #8e44ad);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .list-group-item {
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #ffffff;
+            border: 1px solid #e0d4f7;
+            transition: 0.3s;
+        }
+        .list-group-item:hover {
+            background: #f3e8ff;
+        }
+        .btn-secondary {
+            background: linear-gradient(90deg, #6a11cb, #8e44ad);
+            border: none;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(90deg, #581b98, #6a11cb);
+        }
+        .comment-form {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body class="container mt-4">
+
+    <!-- Header -->
+    <div class="comments-header">
+        <img src="https://img.icons8.com/color/48/speech-bubble.png" alt="Comments Icon"/>
+        <h2 th:text="'Comments for Task: ' + ${task.title}">Comments for Task</h2>
+    </div>
+
+    <!-- Comments List -->
+    <ul class="list-group mt-3">
+        <li class="list-group-item" th:each="c : ${task.comments}">
+            <strong th:text="${c.user.username}">Username</strong>:
+            <span th:text="${c.text}">Comment text</span>
+        </li>
+    </ul>
+
+    <!-- Add Comment Form -->
+    <form class="comment-form" th:action="@{'/admin/task/' + ${task.id} + '/comment'}" method="post">
+        <div class="mb-3">
+            <textarea class="form-control" name="text" rows="3" placeholder="Add a comment..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-secondary">Add Comment</button>
+    </form>
+
+    <!-- Back Button -->
+    <a class="btn btn-secondary mt-3" th:href="@{/admin/dashboard}">⬅ Back</a>
+
+</body>
+</html>
